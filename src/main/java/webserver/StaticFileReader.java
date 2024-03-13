@@ -10,7 +10,7 @@ public class StaticFileReader {
     private final String BASE_URL = "src/main/resources/static";
     private static final Logger logger = LoggerFactory.getLogger(StaticFileReader.class);
 
-    public byte[] staticFileHandler(String line) throws IOException {
+    public byte[] fileReader(String line) throws IOException {
         String[] tokens = line.split(" ");
         String path = tokens[1];
         String filepath = BASE_URL + path;

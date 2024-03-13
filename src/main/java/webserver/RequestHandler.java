@@ -26,7 +26,8 @@ public class RequestHandler implements Runnable {
             String line = br.readLine();
 
             StaticFileReader staticFileReader = new StaticFileReader();
-            byte[] body = staticFileReader.staticFileHandler(line);
+            byte[] body = staticFileReader.fileReader(line);
+            System.out.println("body = " + body);
 
             logger.debug("request line : " +line);
             while(!line.isEmpty()) {
