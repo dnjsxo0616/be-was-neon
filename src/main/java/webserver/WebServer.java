@@ -2,6 +2,8 @@ package webserver;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +27,10 @@ public class WebServer {
             // 클라이언트가 연결될때까지 대기한다.
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
-                Thread thread = new Thread(new RequestHandler(connection));
-                thread.start();
+                // 필요에 따라 스레드를 생성하는 스레드 풀 사용
+                ExecutorService executorService = Executors.newCachedThreadPool();
+                // ExecutorService를 사용하여 RequestHandler 작업을 실행합니다.
+                executorService.execute(new RequestHandler(connection));
             }
         }
     }
