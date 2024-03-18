@@ -53,15 +53,11 @@ public class RequestLine {
         return params.get("password");
     }
 
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public String getHttpMethod() {
-        return httpMethod;
-    }
-
     public String getPath() {
         return path;
+    }
+
+    public String getStartLine() {
+        return httpMethod+ " " + path + " " + protocol;
     }
 }
