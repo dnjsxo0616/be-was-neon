@@ -2,7 +2,10 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Collection;
 
+import db.Database;
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,21 +24,14 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            // UTF-8 인코딩을 사용하여 입력 스트림에서 텍스트를 읽기 위한 BufferedReader 생성
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String line = br.readLine();
+            HttpRequest httpRequest = new HttpRequest(in);
+            httpRequest.logHeaders();
 
-            StaticFileReader staticFileReader = new StaticFileReader();
-            byte[] body = staticFileReader.fileReader(line);
+            Database.addUser(httpRequest.createUser());
 
-            logger.debug("request line : " +line);
-            while(!line.isEmpty()) {
-                line = br.readLine();
-                logger.debug("header : " + line);
-            }
+            byte[] body = httpRequest.staticFileReader();
 
             DataOutputStream dos = new DataOutputStream(out);
-//            byte[] body = "<h1>Hello World</h1>".getBytes();
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
