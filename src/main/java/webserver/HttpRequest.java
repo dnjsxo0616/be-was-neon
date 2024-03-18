@@ -5,43 +5,84 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HttpRequest {
-    private final static String BASE_URL = "src/main/resources/static";
-    private final RequestLine requestLine;
-    private final List<String> headerLine = new ArrayList<>();
     private static final Logger logger = LoggerFactory.getLogger(HttpRequest.class);
+    private final String startLine;
+    private final List<String> headerLine = new ArrayList<>();
+    private final Map<String, String> params = new HashMap<>();
 
     public HttpRequest(InputStream inputStream) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
         String line = br.readLine();
-        this.requestLine = new RequestLine(line);
+        this.startLine = line;
+        if (getPath().contains("?")) {
+            String[] pathPart = getPath().split("\\?");
+            if (pathPart.length == 2) {
+                parseParams(pathPart);
+            }
+        }
         while (!(line = br.readLine()).isEmpty()) {
             this.headerLine.add(line);
         }
     }
 
     public void printLog() {
-        logger.debug("startLine : {}", requestLine.getStartLine());
+        logger.debug("startLine : {}", startLine);
         headerLine.forEach(header -> logger.debug("header : {}", header));
     }
 
+    public String getHttpMethod() {
+        String[] startPart = parseStartLine(startLine);
+        return startPart[0];
+    }
 
-    public byte[] staticFileReader() throws IOException {
-        String path = requestLine.getPath();
-        String filepath = BASE_URL + path;
+    public String getPath() {
+        String[] startPart = parseStartLine(startLine);
+        return startPart[1];
+    }
 
-        try (FileInputStream fileInputStream = new FileInputStream(filepath)) {
-            // 파일을 읽어 바이트 배열로 반환
-            return fileInputStream.readAllBytes();
+    private String[] parseStartLine(String line) {
+        return line.split(" ");
+    }
+
+
+    private void parseParams(String[] pathPart) {
+        String[] paramArray = pathPart[1].split("&");
+        for (String param : paramArray) {
+            String[] paramKeyValue = param.split("=");
+            if (paramKeyValue.length == 2) {
+                try {
+                    String key = URLDecoder.decode(paramKeyValue[0], "UTF-8");
+                    String value = URLDecoder.decode(paramKeyValue[1], "UTF-8");
+                    params.put(key, value);
+                } catch (UnsupportedEncodingException e) {
+                    logger.error(e.getMessage());
+                }
+            }
         }
     }
 
-    public User createUser() {
-        return new User(requestLine.getUserId(), requestLine.getName(), requestLine.getEmail(), requestLine.getPassword());
+    public String getUserId() {
+        return params.get("userId");
     }
+
+    public String getName() {
+        return params.get("name");
+    }
+
+    public String getEmail() {
+        return params.get("email");
+    }
+
+    public String getPassword() {
+        return params.get("password");
+    }
+
 
 }
