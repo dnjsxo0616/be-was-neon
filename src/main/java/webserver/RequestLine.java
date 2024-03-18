@@ -1,10 +1,17 @@
 package webserver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class RequestLine {
+
+    private static final Logger logger = LoggerFactory.getLogger(RequestLine.class);
     private final String httpMethod;
     private final String path;
     private final String protocol;
@@ -30,9 +37,12 @@ public class RequestLine {
         for (String param : paramArray) {
             String[] paramKeyValue = param.split("=");
             if (paramKeyValue.length == 2) {
-                System.out.println("paramKeyValue1 = " + paramKeyValue[0]);
-                System.out.println("paramKeyValue2 = " + paramKeyValue[1]);
-                params.put(paramKeyValue[0], paramKeyValue[1]);
+                try {
+                    String key = URLDecoder.decode(paramKeyValue[0], "UTF-8");
+                    String value = URLDecoder.decode(paramKeyValue[1], "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    logger.error(e.getMessage());
+                }
             }
         }
     }
