@@ -1,25 +1,25 @@
 package webserver;
 
-import model.User;
-
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class RequestLine {
     private final String httpMethod;
     private final String path;
+    private final String protocol;
     private final Map<String, String> params = new HashMap<>();
 
     public RequestLine(String line) {
-        String[] strings = line.split(" ");
-        this.httpMethod = strings[0];
-        this.path = strings[1];
+        String[] parseLine = line.split(" ");
+        System.out.println("parseLine = " + Arrays.toString(parseLine));
+        this.httpMethod = parseLine[0];
+        this.path = parseLine[1];
+        this.protocol = parseLine[2];
 
-        if(path.contains("?")) {
+        if (path.contains("?")) {
             String[] pathPart = path.split("\\?");
-            if(pathPart.length == 2) {
+            if (pathPart.length == 2) {
                 parseParams(pathPart);
             }
         }
@@ -27,9 +27,9 @@ public class RequestLine {
 
     private void parseParams(String[] pathPart) {
         String[] paramArray = pathPart[1].split("&");
-        for(String param : paramArray) {
+        for (String param : paramArray) {
             String[] paramKeyValue = param.split("=");
-            if(paramKeyValue.length == 2) {
+            if (paramKeyValue.length == 2) {
                 System.out.println("paramKeyValue1 = " + paramKeyValue[0]);
                 System.out.println("paramKeyValue2 = " + paramKeyValue[1]);
                 params.put(paramKeyValue[0], paramKeyValue[1]);
@@ -51,5 +51,17 @@ public class RequestLine {
 
     public String getPassword() {
         return params.get("password");
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public String getHttpMethod() {
+        return httpMethod;
+    }
+
+    public String getPath() {
+        return path;
     }
 }
