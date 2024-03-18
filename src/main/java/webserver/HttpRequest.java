@@ -24,8 +24,8 @@ public class HttpRequest {
         }
     }
 
-    public void logHeaders() {
-        logger.debug("startLine : {} {} {}", requestLine.getHttpMethod(), requestLine.getPath(), requestLine.getProtocol());
+    public void printLog() {
+        logger.debug("startLine : {}", requestLine.getStartLine());
         headerLine.forEach(header -> logger.debug("header : {}", header));
     }
 
