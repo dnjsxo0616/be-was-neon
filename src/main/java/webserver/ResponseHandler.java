@@ -23,13 +23,18 @@ public class ResponseHandler {
             "/", ResponseHandler::homeUrl,
             "/registration", ResponseHandler::registrationUrl,
             "/index.html", ResponseHandler::indexUrl,
-            "login", ResponseHandler::loginUrl,
-            "create", ResponseHandler::createUrl
+            "/login", ResponseHandler::loginUrl,
+            "/create", ResponseHandler::createUrl
     );
 
     public static HttpResponse choiceConvertor(HttpRequest httpRequest) {
-        Function<HttpRequest, HttpResponse> handler = map.getOrDefault(httpRequest.getPath(), ResponseHandler::contentTypeUrl);
-        return handler.apply(httpRequest);
+        if (httpRequest.getPath().startsWith("/create")) {
+            return createUrl(httpRequest);
+        }
+        if (map.containsKey(httpRequest.getPath())) {
+            return map.get(httpRequest.getPath()).apply(httpRequest);
+        }
+        return contentTypeUrl(httpRequest);
     }
 
     private static HttpResponse createUrl(HttpRequest httpRequest) {
