@@ -31,30 +31,8 @@ public class RequestHandler implements Runnable {
             HttpRequest httpRequest = new HttpRequest(in);
             httpRequest.printLog();
 
-            if(httpRequest.getPath().contains("/create")) {
-                User user = new User(httpRequest.getUserId(), httpRequest.getName(), httpRequest.getEmail(), httpRequest.getPassword());
-                Database.addUser(user);
-
-                Collection<User> all = Database.findAll();
-                System.out.println("all = " + all);
-
-                HttpResponse httpResponse = HttpResponse.createHttpResponse(LOGIN_URL+INDEX_URL);
-                httpResponse.send(out);
-
-            } else if (httpRequest.getPath().equals(LOGIN_URL)) {
-                HttpResponse httpResponse = HttpResponse.staticHttpResponse(new File(BASE_URL + LOGIN_URL + INDEX_URL));
-                httpResponse.send(out);
-            }
-            else if(httpRequest.getPath().equals(REGISTRATION_URL)) {
-                HttpResponse httpResponse = HttpResponse.staticHttpResponse(new File(BASE_URL + REGISTRATION_URL + INDEX_URL));
-                httpResponse.send(out);
-            } else if(httpRequest.getPath().equals("/")) {
-                HttpResponse httpResponse = HttpResponse.staticHttpResponse(new File(BASE_URL + INDEX_URL));
-                httpResponse.send(out);
-            } else {
-                HttpResponse httpResponse = HttpResponse.staticHttpResponse(new File(BASE_URL + httpRequest.getPath()));
-                httpResponse.send(out);
-            }
+            HttpResponse httpResponse = ResponseHandler.choiceConvertor(httpRequest);
+            httpResponse.send(out);
 
         } catch (IOException e) {
             logger.error(e.getMessage());
