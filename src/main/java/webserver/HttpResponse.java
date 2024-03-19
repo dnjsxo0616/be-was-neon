@@ -32,6 +32,39 @@ public class HttpResponse {
         return new HttpResponse(addRedirectHeader(location));
     }
 
+    public static HttpResponse contentTypeHttpResponse(File file, String type) {
+        return new HttpResponse(addContentTypeHeader((int) file.length(), type), setBody(file));
+    }
+
+    private static List<String> addContentTypeHeader(int fileLength, String path) {
+        String type = getType(path);
+        List<String> headers = new ArrayList<>();
+        // 상태라인
+        headers.add("HTTP/1.1 200 OK \r\n");
+        // 헤더 작성
+        headers.add("Content-Type: "+type+";charset=utf-8\r\n");
+        headers.add("Content-Length: " + fileLength + "\r\n");
+        headers.add("\r\n");
+        return headers;
+    }
+
+    private static String getType(String path) {
+        String type = "text/html";
+        if (path.endsWith(".css")) {
+            type = "text/css";
+        } else if (path.endsWith(".js")) {
+            type = "application/javascript";
+        } else if (path.endsWith(".png")) {
+            type = "image/png";
+        } else if (path.endsWith(".jpg")) {
+            type = "image/jpeg";
+        } else if (path.endsWith(".ico")) {
+            type = "image/x-icon";
+        } else if (path.endsWith(".svg")) {
+            type = "image/svg+xml";
+        }
+        return type;
+    }
 
     public static List<String> addStaticHeader(int fileLength) {
         List<String> headers = new ArrayList<>();
