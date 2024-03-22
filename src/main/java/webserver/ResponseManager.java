@@ -18,19 +18,19 @@ public class ResponseManager {
         this.urlConvertor = new UrlConvertor();
     }
 
-public HttpResponse createResponse(HttpRequest httpRequest) {
-    String requestTarget = httpRequest.getRequestTarget();
+    public HttpResponse createResponse(HttpRequest httpRequest) {
+        String requestTarget = httpRequest.getRequestTarget();
 
-    if(requestTarget.startsWith("/create")) {
-        return handleCreateRequest(httpRequest);
-    } else {
-        return switch (requestTarget) {
-            case UrlConvertor.HOME_URL, UrlConvertor.INDEX_URL -> handleHomeRequest(httpRequest.getRequestTarget());
-            case UrlConvertor.LOGIN_URL, UrlConvertor.REGISTRATION_URL -> handleTargetRequest(httpRequest);
-            default -> handleContentType(httpRequest);
-        };
+        if(requestTarget.startsWith("/create")) {
+            return handleCreateRequest(httpRequest);
+        } else {
+            return switch (requestTarget) {
+                case UrlConvertor.HOME_URL, UrlConvertor.INDEX_URL -> handleHomeRequest(httpRequest.getRequestTarget());
+                case UrlConvertor.LOGIN_URL, UrlConvertor.REGISTRATION_URL -> handleTargetRequest(httpRequest);
+                default -> handleContentType(httpRequest);
+            };
+        }
     }
-}
 
     private HttpResponse handleCreateRequest(HttpRequest httpRequest) {
         User user = new User(httpRequest.getUserId(), httpRequest.getPassword(), httpRequest.getName(), httpRequest.getEmail());
