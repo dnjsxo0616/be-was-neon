@@ -1,4 +1,4 @@
-package webserver;
+package webserver.response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,7 @@ public class HttpResponse {
     }
 
     private void writeHeader(DataOutputStream dos) throws IOException {
-        for(String header : headers) {
+        for (String header : headers) {
             dos.writeBytes(header);
         }
     }
