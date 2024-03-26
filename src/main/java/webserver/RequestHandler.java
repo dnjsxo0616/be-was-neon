@@ -5,6 +5,10 @@ import java.net.Socket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.request.HttpRequest;
+import webserver.request.RequestManager;
+import webserver.response.HttpResponse;
+import webserver.response.ResponseManager;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -22,10 +26,10 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             RequestManager requestManager = new RequestManager();
-            HttpRequest httpRequest = requestManager.parseInputStream(in);
-
             ResponseManager responseManager = new ResponseManager();
-            HttpResponse httpResponse = responseManager.createResponse(httpRequest);
+
+            HttpRequest httpRequest = requestManager.parseInputStream(in);
+            HttpResponse httpResponse = responseManager.findHandler(httpRequest);
             httpResponse.send(out);
 
         } catch (IOException e) {
