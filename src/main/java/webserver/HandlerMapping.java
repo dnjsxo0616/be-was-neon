@@ -3,10 +3,7 @@ package webserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.request.HttpRequest;
-import webserver.requesthandler.Handler;
-import webserver.requesthandler.LoginHandler;
-import webserver.requesthandler.RegistrationHandler;
-import webserver.requesthandler.StaticHandler;
+import webserver.requesthandler.*;
 
 import java.io.IOException;
 
@@ -14,6 +11,7 @@ public class HandlerMapping {
 
     public final static String REGISTRATION_URL = "/registration";
     public final static String LOGIN_URL = "/login";
+    public final static String LOGOUT_URL = "/logout";
 
     private static final Logger logger = LoggerFactory.getLogger(HandlerMapping.class);
 
@@ -28,6 +26,8 @@ public class HandlerMapping {
             return new RegistrationHandler();
         } else if (LOGIN_URL.equals(httpRequest.getRequestTarget())){
             return new LoginHandler();
+        } else if (LOGOUT_URL.equals(httpRequest.getRequestTarget())) {
+            return new LogOutHandler();
         }else {
             return new StaticHandler();
         }
