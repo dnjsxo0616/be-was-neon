@@ -27,7 +27,7 @@ public class HandlerMapping {
         } else if (LOGIN_URL.equals(httpRequest.getRequestTarget())){
             return new LoginHandler();
         } else if (LOGOUT_URL.equals(httpRequest.getRequestTarget())) {
-            return new LogOutHandler();
+            return new LogoutHandler();
         }else {
             return new StaticHandler();
         }

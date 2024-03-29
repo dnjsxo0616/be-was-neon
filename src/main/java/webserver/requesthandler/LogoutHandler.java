@@ -4,16 +4,17 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.SessionManager;
+import webserver.StatusCode;
 import webserver.UrlConvertor;
 import webserver.request.HttpRequest;
-import webserver.response.CreateHeader;
+import webserver.response.HttpResponseBuilder;
 import webserver.response.HttpResponse;
 
 import java.io.IOException;
 import java.util.Optional;
 
-public class LogOutHandler implements Handler{
-    private static final Logger logger = LoggerFactory.getLogger(LogOutHandler.class);
+public class LogoutHandler implements Handler{
+    private static final Logger logger = LoggerFactory.getLogger(LogoutHandler.class);
 
     @Override
     public HttpResponse getRequest(HttpRequest httpRequest) throws IOException {
@@ -32,7 +33,12 @@ public class LogOutHandler implements Handler{
             logger.debug("Session Removal Successful!!");
         }
 
-        CreateHeader createHeader = new CreateHeader();
-        return new HttpResponse(createHeader.redirect302(UrlConvertor.INDEX_URL));
+        //쿠기 만료 설정
+        HttpResponseBuilder httpResponseBuilder = new HttpResponseBuilder();
+        httpResponseBuilder.setStatus(StatusCode.REDIRECTION_302.getMessage());
+        httpResponseBuilder.setLocation(UrlConvertor.INDEX_URL);
+        httpResponseBuilder.setCookieMaxAge(sessionId, "0");
+        httpResponseBuilder.setNewLine();
+        return httpResponseBuilder.buildResponse();
     }
 }
