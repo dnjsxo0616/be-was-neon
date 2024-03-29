@@ -2,8 +2,7 @@ package webserver.response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.HandlerMapping;
-import webserver.RequestHandler;
+import webserver.StatusCode;
 import webserver.request.HttpRequest;
 import webserver.requesthandler.Handler;
 
@@ -29,7 +28,9 @@ public class ResponseManager {
     }
 
     private HttpResponse createServerErrorResponse() {
-        CreateHeader createHeader = new CreateHeader();
-        return new HttpResponse(createHeader.serverError500());
+        HttpResponseBuilder httpResponseBuilder = new HttpResponseBuilder();
+        httpResponseBuilder.setStatus(StatusCode.INTERNAL_SERVER_ERROR_500.getMessage());
+        httpResponseBuilder.setNewLine();
+        return httpResponseBuilder.buildResponse();
     }
 }
